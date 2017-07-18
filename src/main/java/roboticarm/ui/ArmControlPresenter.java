@@ -36,10 +36,6 @@ public class ArmControlPresenter {
         roboticArm.disconnect();
     }
 
-    public void startNewMovements() {
-        armControlView.moveToRecordingView();
-    }
-
     public void savePositionClicked(PartPosition partPosition) {
         PartMoving partMoving = PartMoving.builder()
                 .part(partPosition.getPart())
@@ -86,7 +82,7 @@ public class ArmControlPresenter {
         List<PartMoving> partsMoving = armControlView.getSavedPartsMoving();
 
         roboticArm.home().doOnComplete(() -> {
-            System.out.println("------------------------------------------------------------");
+            System.out.println("--------");
             Thread.sleep(1000);
             move(partsMoving).subscribe();
         }).subscribe();

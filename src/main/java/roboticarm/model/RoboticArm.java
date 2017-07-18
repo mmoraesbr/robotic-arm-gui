@@ -40,7 +40,7 @@ public class RoboticArm {
 
     public Observable<Optional<PartPosition>> home() {
         PartMoving arm = PartMoving.builder()
-                .part(Part.Arm).position(70).blocking(true).speed(30).build();
+                .part(Part.Arm).position(75).blocking(true).speed(30).build();
         PartMoving elevator = PartMoving.builder()
                 .part(Part.Elevator).position(140).blocking(true).speed(30).build();
         PartMoving base = PartMoving.builder()
@@ -54,14 +54,12 @@ public class RoboticArm {
     public Observable<Optional<PartPosition>> move(PartMoving partMoving) {
         return Observable.create(subscriber -> {
             if (partMoving.isValid()) {
-                final String command = createCommand(partMoving);
+                String command = createCommand(partMoving);
 
                 System.out.println(command);
                 execute(command);
 
-                final PartPosition partPosition = PartPosition.builder()
-                        .part(partMoving.part)
-                        .position(partMoving.position).build();
+                PartPosition partPosition = PartPosition.builder().part(partMoving.part).position(partMoving.position).build();
                 subscriber.onNext(Optional.of(partPosition));
             } else {
                 subscriber.onNext(Optional.empty());
@@ -70,18 +68,17 @@ public class RoboticArm {
         });
     }
 
-    private void execute(final String command) throws IOException, InterruptedException {
+    private void execute(String command) throws IOException, InterruptedException {
         armSerialPort.getOutputStream().write(command.getBytes());
-        // aguarda o retorno do arduino indicando que terminou o movimento
-        final InputStream inputStream = armSerialPort.getInputStream();
+        InputStream inputStream = armSerialPort.getInputStream();
         while (inputStream.available() == 0) {
             Thread.sleep(15);
         }
-        // le o byte retornado pelo arduino indicando que o movimento foi concluido
+        // le o ACK para esperar a execucao do comando
         inputStream.read();
     }
 
-    private String createCommand(final PartMoving partMoving) {
+    private String createCommand(PartMoving partMoving) {
         StringBuilder command = new StringBuilder();
         command.append(partMoving.getPart().getCode()).append(leftPad(partMoving.getPosition().toString(), 3, '0'));
         command.append(leftPad(partMoving.getSpeed().toString(), 3, '0')).append((partMoving.isBlocking()) ? '1' : '0');

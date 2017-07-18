@@ -124,8 +124,6 @@ public class ArmControlWindow extends JFrame implements ArmControlView {
             add(devices);
             JButton newRecording = new JButton("Connect");
             add(newRecording);
-//            JButton testBtn = new JButton("Demo");
-//            add(testBtn);
             newRecording.addActionListener((e) -> {
                 armControlPresenter.connect("/dev/" + devices.getSelectedItem());
             });
@@ -180,7 +178,7 @@ public class ArmControlWindow extends JFrame implements ArmControlView {
             this.craw = new PartControlPanel(PartPosition.builder()
                     .part(Part.Craw).position(50).build());
             this.arm = new PartControlPanel(PartPosition.builder()
-                    .part(Part.Arm).position(70).build());
+                    .part(Part.Arm).position(75).build());
 
             add(base);
             add(craw);
